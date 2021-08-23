@@ -58,7 +58,27 @@ Selection show(const char *message, const char *title, Style style, Buttons butt
    flags |= getIcon(style);
    flags |= getButtons(buttons);
 
-   return getSelection(MessageBox(nullptr, message, title, flags), buttons);
+   wchar_t* wmsg = nullptr;
+   wchar_t* wtitle = nullptr;
+   if (message) {
+       int msglen = static_cast<int>(strlen(message));
+       int wmsglen = MultiByteToWideChar(CP_UTF8, 0, message, msglen, nullptr, 0);
+       wmsg = new wchar_t[wmsglen + size_t(1)];
+       MultiByteToWideChar(CP_UTF8, 0, message, msglen, wmsg, wmsglen);
+       wmsg[wmsglen] = L'\0';
+   }
+   if (title) {
+       int titlelen = static_cast<int>(strlen(title));
+       int wtitlelen = MultiByteToWideChar(CP_UTF8, 0, title, titlelen, nullptr, 0);
+       wtitle = new wchar_t[wtitlelen + size_t(1)];
+       MultiByteToWideChar(CP_UTF8, 0, title, titlelen, wtitle, wtitlelen);
+       wtitle[wtitlelen] = L'\0';
+   }
+
+   auto sel = getSelection(MessageBoxW(nullptr, wmsg, wtitle, flags), buttons);
+   if (wmsg) delete[] wmsg;
+   if (wtitle) delete[] wtitle;
+   return sel;
 }
 
 } // namespace boxer
