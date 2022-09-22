@@ -21,7 +21,7 @@ elseif (WIN32)
    )
 elseif (LINUX)
    list(APPEND SOURCES
-      "${SRC_DIR}/boxer_linux.cpp"
+      "${SRC_DIR}/boxer_gtk.cpp"
    )
 endif ()
 
